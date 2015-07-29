@@ -1,0 +1,49 @@
+{
+    "adminUsername": {
+        "value": "clustrix"
+    },
+    "adminPassword": {
+        "value": "Clustrix123"
+    },
+    "sqlrootPassword": {
+        "value": "Clustrix123"
+    },
+    "storageAccountName": {
+        "value": "armtest3"
+    },
+    "location": {
+        "value": "West US"
+    },
+    "virtualNetworkName": {
+        "value": "clustrixVNET"
+    },
+    "addressPrefix": {
+        "value": "10.0.0.0/16"
+    },
+    "subnetName": {
+        "value": "clustrixSubnet1"
+    },
+    "subnetPrefix": {
+        "value": "10.0.10.0/24"
+    },
+    "nodeAddressPrefix": {
+        "value": "10.0.10.1"
+    },
+    "formCluster": {
+    	"value":"true"
+    },
+    "jumpbox": {
+        "value": "Disabled"
+    },
+    "tshirtSize":  {
+        "value": "Small"
+    },
+    "clxVersion": {
+        "value": "latest"
+    },
+    "clustrixClusterName": {
+        "value": "ClustrixDB-cluster"
+    },
+    "clustrixLicenseKey": {
+    	"value": "{\"expiration\":\"2015-08-14 06:24:25\",\"company\":\"clustrix\",\"email\":\"ablardone@clustrix.com\",\"person\":\"alex\",\"signature\":\"302c021455efd14b5096a91f49e2a4b7922446ef70f10e1602141d92d14885bb9add0d6b848e97d25e63a10ea3d1\"}"
+}

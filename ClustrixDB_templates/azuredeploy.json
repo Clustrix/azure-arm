@@ -1,0 +1,355 @@
+{ 
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "adminUsername": {
+            "type": "string",
+            "metadata": {
+                "description": "Administrator user name used when provisioning virtual machines"
+            }
+        },
+        "adminPassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Administrator password used when provisioning virtual machines"
+            }
+        },
+        "sqlrootPassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "SQL root password for the database"
+            }
+        },
+        "storageAccountName": {
+            "type": "string",
+            "metadata": {
+                "description": "Unique namespace for the Storage Account where the Virtual Machine's disks will be placed"
+            }
+        },
+        "location": {
+            "type": "string",
+            "allowedValues": [
+                "West US",
+                "East US",
+                "East Asia",
+                "Southeast Asia",
+                "West Europe"
+            ],
+            "metadata": {
+                "description": "Azure location where resources will be provisioned"
+            }
+        },
+        "virtualNetworkName": {
+            "type": "string",
+            "defaultValue": "CLXNet",
+            "metadata": {
+                "description": "The name of the virtual network for the Clustrix cluster"
+            }
+        },
+        "addressPrefix": {
+            "type": "string",
+            "defaultValue": "10.0.0.0/16",
+            "metadata": {
+                "description": "The network address space for the virtual network"
+            }
+        },
+        "subnetName": {
+            "type": "string",
+            "defaultValue": "clustrixSubnet1",
+            "metadata": {
+                "description": "Subnet name for the virtual network that resources will be provisioned into"
+            }
+        },
+        "subnetPrefix": {
+            "type": "string",
+            "defaultValue": "10.0.10.0/24",
+            "metadata": {
+                "description": "Address space for the virtual network subnet"
+            }
+        },
+        "nodeAddressPrefix": {
+            "type": "string",
+            "defaultValue": "10.0.10.1",
+            "metadata": {
+                "description": "The IP address prefix that will be used for constructing a static private IP address for each node in the cluster"
+            }
+        },
+        "formCluster": {
+            "type": "string",
+            "defaultValue": "true",
+            "allowedValues": [
+                "true",
+                "false"
+            ],
+            "metadata": {
+                "description": "Form a new cluster with the nodes. Disable if you want to add the nodes to an existing cluster"
+            }
+        },
+        "jumpbox": {
+            "type": "string",
+            "defaultValue": "Disabled",
+            "allowedValues": [
+                "Enabled",
+                "Disabled"
+            ],
+            "metadata": {
+                "description": "The flag allowing to enable or disable provisioning of the jumpbox VM that can be used to access the Clustrix nodes and as a backup target"
+            }
+        },
+        "tshirtSize": {
+            "type": "string",
+            "defaultValue": "Small",
+            "allowedValues": [
+                "Small",
+                "Medium",
+                "Large"
+            ],
+            "metadata": {
+                "description": "T-shirt size of the ClustrixDB deployment"
+            }
+        },
+        "clxVersion": {
+            "type": "string",
+            "defaultValue": "latest",
+            "metadata": {
+                "description": "The version of the clxnode package to be deployed on the cluster (or use 'latest' to pull in the latest release)"
+            }
+        },
+        "clustrixClusterName": {
+            "type": "string",
+            "defaultValue": "ClustrixDB-cluster",
+            "metadata": {
+                "description": "The name of the ClustrixDB cluster"
+            }
+        },
+        "clustrixLicenseKey": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "ClustrixDB license key"
+            }
+        }
+    },
+    "variables": {
+        "_comment0": "/* T-shirt sizes may vary for different reasons, and some customers may want to modify these - so feel free to go ahead and define your favorite t-shirts */",
+        "tshirtSizeSmall": {
+            "vmSizeMember": "Standard-DS13",
+            "numberOfNodes": 3,
+            "numNodesMinusLast": 2,
+            "vmTemplate": "[concat(variables('templateBaseUrl'), 'node-resources.json')]"
+        },
+        "tshirtSizeMedium": {
+            "vmSizeMember": "Standard-G3",
+            "numberOfNodes": 3,
+            "numNodesMinusLast": 2,
+            "vmTemplate": "[concat(variables('templateBaseUrl'), 'node-resources.json')]"
+        },
+        "tshirtSizeLarge": {
+            "vmSizeMember": "Standard-G4",
+            "numberOfNodes": 3,
+            "numNodesMinusLast": 2,
+            "vmTemplate": "[concat(variables('templateBaseUrl'), 'node-resources.json')]"
+        },
+        "imageInfo": {
+            "imagePublisher": "OpenLogic",
+            "imageOffer": "CentOS",
+            "imageSKU": "6.5"
+        },
+        "vmStorageAccountContainerName": "clustrix-vhds",
+        "vmStorageAccountDomain": ".blob.core.windows.net",
+        "vnetID": "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
+        "scriptUrl": "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/redis-high-availability/",
+        "templateBaseUrl": "[variables('scriptUrl')]",
+        "jumpboxTemplateEnabled": "jumpbox-resources.json",
+        "jumpboxTemplateDisabled": "empty-resources.json",
+        "sharedTemplateUrl": "[concat(variables('templateBaseUrl'), 'shared-resources.json')]",
+        "jumpboxTemplateUrl": "[concat(variables('templateBaseUrl'), variables(concat('jumpboxTemplate', parameters('jumpbox'))))]",
+        "commonSettings": {
+            "availabilitySetName": "clxAvailSet",
+            "location": "[parameters('location')]"
+        },
+        "storageSettings": {
+            "vhdStorageAccountName": "[parameters('storageAccountName')]",
+            "vhdContainerName": "[variables('vmStorageAccountContainerName')]",
+            "destinationVhdsContainer": "[concat('https://', parameters('storageAccountName'), variables('vmStorageAccountDomain'), '/', variables('vmStorageAccountContainerName'), '/')]"
+        },
+        "networkSettings": {
+            "virtualNetworkName": "[parameters('virtualNetworkName')]",
+            "addressPrefix": "[parameters('addressPrefix')]",
+            "subnetName": "[parameters('subnetName')]",
+            "subnetPrefix": "[parameters('subnetPrefix')]",
+            "subnetRef": "[concat(variables('vnetID'), '/subnets/', parameters('subnetName'))]",
+            "machineIpPrefix": "[parameters('nodeAddressPrefix')]"
+        },
+        "machineSettings": {
+            "adminUsername": "[parameters('adminUsername')]",
+            "machineNamePrefix": "redisnode-",
+            "osImageReference": {
+                "publisher": "[variables('imageInfo').imagePublisher]",
+                "offer": "[variables('imageInfo').imageOffer]",
+                "sku": "[variables('imageInfo').imageSKU]",
+                "version": "latest"
+            }
+        },
+        "clusterSpec": "[variables(concat('tshirtSize', parameters('tshirtSize')))]",
+        "installCommand": "[concat('clustrix-install.sh -n ', parameters('clustrixClusterName'), ' -v ', parameters('clxVersion'), ' -k ', parameters('clxLicenseKey'), ' -c ', variables('clusterSpec').numberOfNodes, ' -p ', variables('networkSettings').machineIpPrefix)]",
+        "vmScripts": {
+            "scriptsToDownload": [
+                "[concat(variables('scriptUrl'), 'clustrix-install.sh')]"
+            ],
+            "installCommand": "[concat('bash ', variables('installCommand'))]",
+            "setupCommand": "[concat('bash ', variables('installCommand'), ' -l')]"
+        }
+    },
+    "resources": [
+        {
+            "name": "shared-resources",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2015-01-01",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('sharedTemplateUrl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "commonSettings": {
+                        "value": "[variables('commonSettings')]"
+                    },
+                    "storageSettings": {
+                        "value": "[variables('storageSettings')]"
+                    },
+                    "networkSettings": {
+                        "value": "[variables('networkSettings')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "jumpbox-resources",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2015-01-01",
+            "dependsOn": [
+                "[concat('Microsoft.Resources/deployments/', 'shared-resources')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('jumpboxTemplateUrl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "commonSettings": {
+                        "value": "[variables('commonSettings')]"
+                    },
+                    "storageSettings": {
+                        "value": "[variables('storageSettings')]"
+                    },
+                    "networkSettings": {
+                        "value": "[variables('networkSettings')]"
+                    },
+                    "machineSettings": {
+                        "value": "[variables('machineSettings')]"
+                    },
+                    "adminPassword": {
+                        "value": "[parameters('adminPassword')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "name": "[concat('node-resources', copyindex())]",
+            "apiVersion": "2015-01-01",
+            "dependsOn": [
+                "[concat('Microsoft.Resources/deployments/', 'shared-resources')]"
+            ],
+            "copy": {
+                "name": "memberNodesLoop",
+                "count": "[variables('clusterSpec').numNodesMinusLast]"
+            },
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('clusterSpec').vmTemplate]",
+                    "contentVersion": "1.0.0.0"
+                },	
+                "parameters": {
+                    "commonSettings": {
+                        "value": "[variables('commonSettings')]"
+                    },
+                    "storageSettings": {
+                        "value": "[variables('storageSettings')]"
+                    },
+                    "networkSettings": {
+                        "value": "[variables('networkSettings')]"
+                    },
+                    "machineSettings": {
+                        "value": {
+                            "adminUsername": "[variables('machineSettings').adminUsername]",
+                            "machineNamePrefix": "[variables('machineSettings').machineNamePrefix]",
+                            "osImageReference": "[variables('machineSettings').osImageReference]",
+                            "vmSize": "[variables('clusterSpec').vmSizeMember]",
+                            "machineIndex": "[copyindex(2)]",
+                            "vmScripts": "[variables('vmScripts').scriptsToDownload]",
+                            "commandToExecute": "[concat(variables('vmScripts').installCommand, ' -i ', copyindex(2))]"
+                        }
+                    },
+                    "adminPassword": {
+                        "value": "[parameters('adminPassword')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "lastnode-resources",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2015-01-01",
+            "dependsOn": [
+                "memberNodesLoop"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('clusterSpec').vmTemplate]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "commonSettings": {
+                        "value": "[variables('commonSettings')]"
+                    },
+                    "storageSettings": {
+                        "value": "[variables('storageSettings')]"
+                    },
+                    "networkSettings": {
+                        "value": "[variables('networkSettings')]"
+                    },
+                    "machineSettings": {
+                        "value": {
+                            "adminUsername": "[variables('machineSettings').adminUsername]",
+                            "machineNamePrefix": "[variables('machineSettings').machineNamePrefix]",
+                            "osImageReference": "[variables('machineSettings').osImageReference]",
+                            "vmSize": "[variables('clusterSpec').vmSizeMember]",
+                            "machineIndex": "1",
+                            "vmScripts": "[variables('vmScripts').scriptsToDownload]",
+                            "commandToExecute": "[concat(variables('vmScripts').setupCommand, ' -i ', 1, ' -s ', parameters('sqlrootPassword'), ' -f ', parameters('formCluster')]"
+                        }
+                    },
+                    "adminPassword": {
+                        "value": "[parameters('adminPassword')]"
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {
+        "installCommand": {
+            "value": "[variables('vmScripts').installCommand]",
+            "type": "string"
+        },
+        "setupCommand": {
+            "value": "[variables('vmScripts').setupCommand]",
+            "type": "string"
+        }
+    }
+}
