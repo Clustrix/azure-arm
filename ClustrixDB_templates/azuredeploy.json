@@ -158,7 +158,7 @@
         "vmStorageAccountContainerName": "clustrix-vhds",
         "vmStorageAccountDomain": ".blob.core.windows.net",
         "vnetID": "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
-        "scriptUrl": "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/redis-high-availability/",
+        "scriptUrl": "https://raw.githubusercontent.com/Clustrix/azure-arm/master/ClustrixDB_templates/",
         "templateBaseUrl": "[variables('scriptUrl')]",
         "jumpboxTemplateEnabled": "jumpbox-resources.json",
         "jumpboxTemplateDisabled": "empty-resources.json",
