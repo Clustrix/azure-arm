@@ -183,7 +183,7 @@
         },
         "machineSettings": {
             "adminUsername": "[parameters('adminUsername')]",
-            "machineNamePrefix": "redisnode-",
+            "machineNamePrefix": "clxnode-",
             "osImageReference": {
                 "publisher": "[variables('imageInfo').imagePublisher]",
                 "offer": "[variables('imageInfo').imageOffer]",
