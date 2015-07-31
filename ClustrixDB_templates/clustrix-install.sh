@@ -209,7 +209,7 @@ setup_cluster()
 	mysql -e "set global cluster_name = \"$CLUSTER_NAME\""
 	
 	#add nodes by ip to cluster: 
-	for ((i=$NODE_INDEX+1; i<=$NUM_NODES; i++ )); do
+	for ((i=$NODE_INDEX+2; i<=$NUM_NODES; i++ )); do
    		mysql -e "alter cluster add \"$IP_PREFIX$i\""
 		sleep 5
 	done
