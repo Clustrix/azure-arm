@@ -45,6 +45,6 @@
         "value": "ClustrixDB-cluster"
     },
     "clustrixLicenseKey": {
-    	"value": {"expiration":"2015-08-14 06:24:25","company":"clustrix","email":"ablardone@clustrix.com","person":"alex","signature":"302c021455efd14b5096a91f49e2a4b7922446ef70f10e1602141d92d14885bb9add0d6b848e97d25e63a10ea3d1"}
+    	"value": "dummy"
     }
 }

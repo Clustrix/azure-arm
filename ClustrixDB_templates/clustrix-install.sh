@@ -202,7 +202,8 @@ setup_cluster()
 	log "starting cluster setup on ${HOSTNAME}" 
 	#myip=`ifconfig eth0 | grep inet\ addr | awk '{print $2}' | cut -b 6-20`
 	myip="$IP_PREFIX$NODE_INDEX"
-	
+	# temp
+	CLX_LICENSE='{"expiration":"2015-08-14 06:24:25","company":"clustrix","email":"ablardone@clustrix.com","person":"alex","signature":"302c021455efd14b5096a91f49e2a4b7922446ef70f10e1602141d92d14885bb9add0d6b848e97d25e63a10ea3d1"}'
 	mysql -e "SET PASSWORD FOR 'root'@'%' = PASSWORD(\"$SQLPASS\")"
 	mysql -e "set global license = \"$CLX_LICENSE\""
 	mysql -e "INSERT INTO clustrix_ui.clustrix_ui_systemproperty (name) VALUES (\"install_wizard_completed\")"
