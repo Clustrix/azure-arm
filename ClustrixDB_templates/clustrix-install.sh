@@ -221,7 +221,7 @@ setup_cluster()
 setup_storage
 tweek_os
 install_clx
-if [[ $IS_LAST_NODE && $CLUSTER]]; then
+if [[ $IS_LAST_NODE && $CLUSTER ]]; then
 	log "waiting 30 secs before cluster setup"
 	sleep 30
 	setup_cluster
