@@ -36,7 +36,7 @@ LOGGING_KEY="c75b83f3-fa3a-4e35-8945-e2b19d15bae9"
 
 
 ########################################################
-# This script will install Redis from sources
+# This script will install clusrixDB
 ########################################################
 help()
 {
@@ -59,7 +59,7 @@ log()
 	echo "$1"
 }
 
-log "Begin execution of Redis installation script extension on ${HOSTNAME}"
+log "Begin execution of clustrix installation script extension on ${HOSTNAME}"
 
 if [ "${UID}" -ne 0 ];
 then
@@ -121,7 +121,7 @@ setup_storage()
 	device='/dev/sdb'
 
 	# Clustrix log partition size: either 15% of total space or 50GB whichever is smaller
-	totsize=$((`blockdev --getsize64 $device`)); done
+	totsize=$((`blockdev --getsize64 $device`))
 	totsize=$(($totsize/1024/1024/1024))
 	logsize1="$(echo "scale=4; $totsize*0.15" | bc)"
 	logsize1=${logsize1%.*}

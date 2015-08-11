@@ -133,19 +133,19 @@
     "variables": {
         "_comment0": "/* T-shirt sizes may vary for different reasons, and some customers may want to modify these - so feel free to go ahead and define your favorite t-shirts */",
         "tshirtSizeSmall": {
-            "vmSizeMember": "Standard-DS13",
+            "vmSizeMember": "Standard_DS13",
             "numberOfNodes": 3,
             "numNodesMinusLast": 2,
             "vmTemplate": "[concat(variables('templateBaseUrl'), 'node-resources.json')]"
         },
         "tshirtSizeMedium": {
-            "vmSizeMember": "Standard-G3",
+            "vmSizeMember": "Standard_G3",
             "numberOfNodes": 3,
             "numNodesMinusLast": 2,
             "vmTemplate": "[concat(variables('templateBaseUrl'), 'node-resources.json')]"
         },
         "tshirtSizeLarge": {
-            "vmSizeMember": "Standard-G4",
+            "vmSizeMember": "Standard_G4",
             "numberOfNodes": 3,
             "numNodesMinusLast": 2,
             "vmTemplate": "[concat(variables('templateBaseUrl'), 'node-resources.json')]"
@@ -332,7 +332,7 @@
                             "vmSize": "[variables('clusterSpec').vmSizeMember]",
                             "machineIndex": "1",
                             "vmScripts": "[variables('vmScripts').scriptsToDownload]",
-                            "commandToExecute": "[concat(variables('vmScripts').setupCommand, ' -i ', 1, ' -s ', parameters('sqlrootPassword'), ' -f ', parameters('formCluster')]"
+                            "commandToExecute": "[concat(variables('vmScripts').setupCommand, ' -i ', '1', ' -s ', parameters('sqlrootPassword'), ' -f ', parameters('formCluster'))]"
                         }
                     },
                     "adminPassword": {
