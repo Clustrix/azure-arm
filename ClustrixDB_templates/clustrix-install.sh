@@ -33,6 +33,9 @@ CLUSTER='false'
 CLX_LICENSE=''
 SQLPASS='clustrix'
 LOGGING_KEY="c75b83f3-fa3a-4e35-8945-e2b19d15bae9"
+# clustrix mount path 
+data_path='/mnt/resource'
+log_path='/mnt/resource/log'
 
 
 ########################################################
@@ -117,7 +120,9 @@ setup_storage()
 {	
 	#data disks 
 	# find un-configured storage device(s) to setup the data volume:
-	umount /mnt/resource
+	log "data path is: $data_path."
+	log "log path is: $log_path
+	umount $data_path
 	device='/dev/sdb'
 
 	# Clustrix log partition size: either 15% of total space or 50GB whichever is smaller
@@ -127,10 +132,6 @@ setup_storage()
 	logsize1=${logsize1%.*}
 	logsize=$(($logsize1<50?$logsize1:50))
 	dataSize=$(($totsize-$logsize))
-
-	# clustrix mount path 
-	data_path='/mnt/resource'
-	log_path='/mnt/resource/log'
 
 	mkdir -p $data_path
 	log "Starting storage setup, single disk: $device"
@@ -150,7 +151,7 @@ setup_storage()
 	# Create symlink from /data/clustrix to /mnt/resource  
 	mkdir /data
 	cd /data
-	ln -s /mnt/resource clustrix
+	ln -s $data_path clustrix
 } 
 
 tweek_os() 
@@ -217,11 +218,13 @@ setup_cluster()
 	log "Completed cluster setup on ${HOSTNAME}"	
 }
 
-
-setup_storage
+logfile=$$.log
+exec > $logfile 2>&1
+whoami
+setup_storage 
 tweek_os
 install_clx
-if [[ $IS_LAST_NODE && $CLUSTER ]]; then
+if [ $IS_LAST_NODE -eq 1 ] && [ $CLUSTER -eq 1 ]; then
 	log "waiting 30 secs before cluster setup"
 	sleep 30
 	setup_cluster
