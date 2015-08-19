@@ -36,6 +36,39 @@
     "variables": {
     },
     "resources": [
+    	{
+            "apiVersion": "2015-05-01-preview",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "name": "clxSecurityGroup",
+            "location": "[parameters('commonSettings').location]",
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "SSH",
+                        "properties": {
+                            "description": "Allows SSH traffic",
+                            "protocol": "Tcp",
+                            "sourcePortRange": "22",
+                            "destinationPortRange": "22",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 100,
+                            "direction": "Inbound"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "apiVersion": "2015-05-01-preview",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "name": "[concat('clxPublicIP', parameters('machineSettings').machineIndex)]",
+            "location": "[parameters('commonSettings').location]",
+            "properties": {
+                "publicIPAllocationMethod": "Dynamic"
+            }
+        },
         {
             "type": "Microsoft.Network/networkInterfaces",
             "name": "[concat('nicMember', parameters('machineSettings').machineIndex)]",
@@ -48,6 +81,12 @@
                         "properties": {
                             "privateIPAllocationMethod": "Static",
                             "privateIPAddress": "[concat(parameters('networkSettings').machineIpPrefix, parameters('machineSettings').machineIndex)]",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses',concat('clxPublicIP', parameters('machineSettings').machineIndex))]"
+                            },
+                            "networkSecurityGroup": {
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'clxSecurityGroup')]"
+                            },
                             "subnet": {
                                 "id": "[parameters('networkSettings').subnetRef]"
                             }
