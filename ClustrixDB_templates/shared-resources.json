@@ -67,63 +67,63 @@
             }
         },
         {
-      "apiVersion": "2015-05-01-preview",
-      "type": "Microsoft.Network/loadBalancers",
-      "name": "[parameters('lbSettings').loadBalancerName]",
-      "location": "[parameters('commonSettings').location]",
-      "dependsOn": [
-        "[concat('Microsoft.Network/virtualNetworks',parameters('networkSettings').virtualNetworkName)]"
-      ],
-      "properties": {
-        "frontendIpConfigurations": [
-          {
-            "properties": {
-              "subnet": {
-                "Id": "[parameters('networkSettings').subnetRef]"
-              },
-              "privateIPAddress": "[parameters('lbSettings').loadBalancerIp]",
-              "privateIPAllocationMethod": "Static"
-            },
-            "name": "LoadBalancerFrontend"
-          }
-        ],
-        "backendAddressPools": [
-          {
-            "name": "clxlbBackendPool1"
-          }
-        ],
-        "loadBalancingRules": [
-          {
-            "properties": {
-              "frontendIPConfiguration": {
-                "Id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('lbSettings').loadBalancerName), '/frontendIpConfigurations/LoadBalancerFrontend')]"
-              },
-              "backendAddressPool": {
-                "Id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('lbSettings').loadBalancerName), '/backendAddressPools/BackendPool1')]"
-              },
-              "probe": {
-                "Id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('lbSettings').loadBalancerName), '/probes/lbprobe')]"
-              },
-              "protocol": "Tcp",
-              "frontendPort": 3306,
-              "backendPort": 3306,
-              "idleTimeoutInMinutes": 60
-            },
-            "Name": "clxlb-rule"
-          }
-        ],
-        "probes": [
-          {
-            "properties": {
-              "protocol": "Tcp",
-              "port": 80,
-              "intervalInSeconds": 10,
-              "numberOfProbes": 2
-            },
-            "name": "clxlb-probe"
-          }
-        ]
-      }
-    }
+      		"apiVersion": "2015-05-01-preview",
+      		"type": "Microsoft.Network/loadBalancers",
+      		"name": "[parameters('lbSettings').loadBalancerName]",
+      		"location": "[parameters('commonSettings').location]",
+      		"dependsOn": [
+        		"[concat('Microsoft.Network/virtualNetworks/',parameters('networkSettings').virtualNetworkName)]"
+      		],
+      		"properties": {
+				"frontendIpConfigurations": [
+				{
+					"properties": {
+						"subnet": {
+							"Id": "[parameters('networkSettings').subnetRef]"
+						},
+						"privateIPAddress": "[parameters('lbSettings').loadBalancerIp]",
+						"privateIPAllocationMethod": "Static"
+					},
+					"name": "LoadBalancerFrontend"
+				}
+				],
+				"backendAddressPools": [
+				{
+					"name": "clxlbBackendPool1"
+				}
+				],
+				"loadBalancingRules": [
+				{
+					"properties": {
+						"frontendIPConfiguration": {
+							"Id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('lbSettings').loadBalancerName), '/frontendIpConfigurations/LoadBalancerFrontend')]"
+						},
+						"backendAddressPool": {
+							"Id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('lbSettings').loadBalancerName), '/backendAddressPools/BackendPool1')]"
+						},
+						"probe": {
+							"Id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('lbSettings').loadBalancerName), '/probes/lbprobe')]"
+						},
+						"protocol": "Tcp",
+						"frontendPort": 3306,
+						"backendPort": 3306,
+						"idleTimeoutInMinutes": 60
+					},
+					"Name": "clxlb-rule"
+				}
+				],
+        		"probes": [
+          		{
+            		"properties": {
+              			"protocol": "Tcp",
+              			"port": 80,
+              			"intervalInSeconds": 10,
+              			"numberOfProbes": 2
+            		},
+            		"name": "clxlb-probe"
+          		}
+        		]
+      		}
+    	}
     ]
 }
