@@ -79,7 +79,7 @@
 				{
 					"properties": {
 						"subnet": {
-							"Id": "[parameters('networkSettings').subnetRef]"
+							"id": "[parameters('networkSettings').subnetRef]"
 						},
 						"privateIPAddress": "[parameters('lbSettings').loadBalancerIp]",
 						"privateIPAllocationMethod": "Static"
@@ -96,13 +96,13 @@
 				{
 					"properties": {
 						"frontendIPConfiguration": {
-							"Id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('lbSettings').loadBalancerName), '/frontendIpConfigurations/LoadBalancerFrontend')]"
+							"id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('lbSettings').loadBalancerName), '/frontendIpConfigurations/LoadBalancerFrontend')]"
 						},
 						"backendAddressPool": {
-							"Id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('lbSettings').loadBalancerName), '/backendAddressPools/clxlbBackendPool1')]"
+							"id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('lbSettings').loadBalancerName), '/backendAddressPools/clxlbBackendPool1')]"
 						},
 						"probe": {
-							"Id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('lbSettings').loadBalancerName), '/probes/clxlb-probe')]"
+							"id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('lbSettings').loadBalancerName), '/probes/clxlb-probe')]"
 						},
 						"protocol": "Tcp",
 						"frontendPort": 3306,
