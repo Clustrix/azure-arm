@@ -22,6 +22,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+#debug
+set -x
+
 # Script parameters and their defaults
 VERSION="latest"
 CLUSTER_NAME="clx-cluster"
@@ -157,7 +160,7 @@ setup_storage()
 tweek_os() 
 {
     #update OS 
-    #yum -y update 
+    yum -y update 
 
     #install utils
     yum -y install wget screen telnet
