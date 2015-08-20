@@ -189,7 +189,7 @@
         },
         "lbSettings": {
             "loadBalancerName": "[parameters('loadBalancerName')]",
-            "loadBalancerIp": "[concat(parameters('nodeAddressPrefix'), '0']"
+            "loadBalancerIp": "[concat(parameters('nodeAddressPrefix'), '0')]"
         },
         "machineSettings": {
             "adminUsername": "[parameters('adminUsername')]",
