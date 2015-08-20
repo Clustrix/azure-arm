@@ -308,6 +308,9 @@
                             "commandToExecute": "[concat(variables('vmScripts').installCommand, ' -i ', copyindex(2))]"
                         }
                     },
+                    "lbSettings": {
+                        "value": "[variables('lbSettings')]"
+                    },
                     "adminPassword": {
                         "value": "[parameters('adminPassword')]"
                     }
