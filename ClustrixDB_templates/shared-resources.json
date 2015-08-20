@@ -107,7 +107,7 @@
 						"protocol": "Tcp",
 						"frontendPort": 3306,
 						"backendPort": 3306,
-						"idleTimeoutInMinutes": 60
+						"idleTimeoutInMinutes": 30
 					},
 					"Name": "clxlb-rule"
 				}
