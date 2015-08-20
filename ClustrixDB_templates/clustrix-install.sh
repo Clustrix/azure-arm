@@ -157,7 +157,7 @@ setup_storage()
 tweek_os() 
 {
     #update OS 
-    yum -y update 
+    #yum -y update 
 
     #install utils
     yum -y install wget screen telnet
@@ -218,7 +218,7 @@ setup_cluster()
     log "Completed cluster setup on ${HOSTNAME}"    
 }
 
-logfile=$$.log
+logfile=/var/log/install.$$.log
 exec > $logfile 2>&1
 whoami
 setup_storage 
