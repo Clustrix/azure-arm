@@ -182,7 +182,7 @@ install_clx()
     fi
 
     curl $CLXSRC/$SRCVERSION.tar.bz2 -s | tar xvj 
-    cd $SRCVERSION; sudo -E ./clxnode_install.py --data-path=$data_path --log-path=$log_path  --ui-log-path=$log_path/clustrix_ui --yes
+    cd $SRCVERSION; ./clxnode_install.py --data-path=$data_path --log-path=$log_path  --ui-log-path=$log_path/clustrix_ui --yes
 
     # Post install steps 
     export PATH=$PATH:/opt/clustrix/bin
