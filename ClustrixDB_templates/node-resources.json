@@ -26,6 +26,12 @@
                 "Description": "Machine settings object"
             }
         },
+         "lbSettings": {
+            "type": "object",
+            "metadata": {
+                "Description": "load balancer settings object"
+            }
+        },
         "adminPassword": {
             "type": "securestring",
             "metadata": {
@@ -34,6 +40,7 @@
         }
     },
     "variables": {
+		"loadBalancerId": "[resourceId('Microsoft.Network/loadBalancers', parameters('lbSettings').loadBalancerName)]"
     },
     "resources": [
     	{
@@ -85,6 +92,9 @@
                         "properties": {
                             "privateIPAllocationMethod": "Static",
                             "privateIPAddress": "[concat(parameters('networkSettings').machineIpPrefix, parameters('machineSettings').machineIndex)]",
+                            "loadBalancerBackendAddressPools": {
+                  				"id": "[concat(variables('loadBalancerId'), '/backendAddressPools/clxlbBackendPool1')]"
+                			},
                             "publicIPAddress": {
                                 "id": "[resourceId('Microsoft.Network/publicIPAddresses',concat('clxPublicIP', parameters('machineSettings').machineIndex))]"
                             },

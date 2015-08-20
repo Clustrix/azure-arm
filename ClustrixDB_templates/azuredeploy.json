@@ -74,6 +74,12 @@
                 "description": "The IP address prefix that will be used for constructing a static private IP address for each node in the cluster"
             }
         },
+        "loadBalancerName": {
+      		"type": "string",
+      		"metadata": {
+        	"description": "This is the name of the load balancer"
+      		}
+    	},
         "formCluster": {
             "type": "string",
             "defaultValue": "true",
@@ -181,6 +187,10 @@
             "subnetRef": "[concat(variables('vnetID'), '/subnets/', parameters('subnetName'))]",
             "machineIpPrefix": "[parameters('nodeAddressPrefix')]"
         },
+        "lbSettings": {
+            "loadBalancerName": "[parameters('loadBalancerName')]",
+            "loadBalancerIp": "[concat(parameters('nodeAddressPrefix'), '0']"
+        },
         "machineSettings": {
             "adminUsername": "[parameters('adminUsername')]",
             "machineNamePrefix": "clxnode-",
@@ -221,6 +231,9 @@
                     },
                     "networkSettings": {
                         "value": "[variables('networkSettings')]"
+                    },
+                    "lbSettings": {
+                        "value": "[variables('lbSettings')]"
                     }
                 }
             }

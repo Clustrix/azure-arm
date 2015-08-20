@@ -209,7 +209,7 @@ setup_cluster()
     # temp
     CLX_LICENSE='{"expiration":"2015-08-27 04:22:07","company":"clustrix","email":"ablardone@clustrix.com","person":"clustrix","signature":"302c021464347ef03123e1da666c7bfba1185c86de1c20f502145a463d8cb291dbe3f377c965aee284c15682ac71"}'
     mysql -e "SET PASSWORD FOR 'root'@'%' = PASSWORD(\"$SQLPASS\")"
-    mysql -e "set global license = \"$CLX_LICENSE\""
+    mysql -e "set global license = $CLX_LICENSE"
     mysql -e "INSERT INTO clustrix_ui.clustrix_ui_systemproperty (name) VALUES (\"install_wizard_completed\")"
     mysql -e "set global cluster_name = \"$CLUSTER_NAME\""
  

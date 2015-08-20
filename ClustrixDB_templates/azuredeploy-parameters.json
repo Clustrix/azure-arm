@@ -32,6 +32,9 @@
     "formCluster": {
     	"value":"true"
     },
+    "loadBalancerName": {
+    	"value": "clxLB"
+    },
     "jumpbox": {
         "value": "Disabled"
     },
