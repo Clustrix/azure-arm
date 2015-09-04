@@ -351,6 +351,9 @@
                             "commandToExecute": "[concat(variables('vmScripts').setupCommand, ' -i ', '1', ' -s ', parameters('sqlrootPassword'), ' -f ', parameters('formCluster'))]"
                         }
                     },
+                    "lbSettings": {
+                        "value": "[variables('lbSettings')]"
+                    },
                     "adminPassword": {
                         "value": "[parameters('adminPassword')]"
                     }
