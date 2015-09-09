@@ -160,7 +160,8 @@ setup_storage()
 tweek_os() 
 {
     #update OS 
-    yum -y update 
+    yum -y install yum-plugin-security
+    yum -y update-minimal --security
 
     #install utils
     yum -y install wget screen telnet
