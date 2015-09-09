@@ -92,9 +92,11 @@
                         "properties": {
                             "privateIPAllocationMethod": "Static",
                             "privateIPAddress": "[concat(parameters('networkSettings').machineIpPrefix, parameters('machineSettings').machineIndex)]",
-                            "loadBalancerBackendAddressPools": {
-                        		"id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('lbSettings').loadBalancerName), '/backendAddressPools/clxlbBackendPool1')]"
-                			},
+                            "loadBalancerBackendAddressPools": [
+                            	{
+                        			"id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('lbSettings').loadBalancerName), '/backendAddressPools/clxlbBackendPool1')]"
+                				}
+                			],
                             "publicIPAddress": {
                                 "id": "[resourceId('Microsoft.Network/publicIPAddresses',concat('clxPublicIP', parameters('machineSettings').machineIndex))]"
                             },
