@@ -8,10 +8,10 @@
                 "description": "Administrator user name used when provisioning virtual machines"
             }
         },
-        "adminPassword": {
+        "sshPublicKey": {
             "type": "securestring",
             "metadata": {
-                "description": "Administrator password used when provisioning virtual machines"
+                "description": "This field must be a valid SSH public key."
             }
         },
         "sqlrootPassword": {
@@ -75,11 +75,11 @@
             }
         },
         "loadBalancerName": {
-      		"type": "string",
-      		"metadata": {
-        	"description": "This is the name of the load balancer"
-      		}
-    	},
+            "type": "string",
+            "metadata": {
+            "description": "This is the name of the load balancer"
+            }
+        },
         "formCluster": {
             "type": "string",
             "defaultValue": "true",
@@ -264,8 +264,8 @@
                     "machineSettings": {
                         "value": "[variables('machineSettings')]"
                     },
-                    "adminPassword": {
-                        "value": "[parameters('adminPassword')]"
+                    "sshPublicKey": {
+                        "value": "[parameters('sshPublicKey')]"
                     }
                 }
             }
@@ -286,7 +286,7 @@
                 "templateLink": {
                     "uri": "[variables('clusterSpec').vmTemplate]",
                     "contentVersion": "1.0.0.0"
-                },	
+                },  
                 "parameters": {
                     "commonSettings": {
                         "value": "[variables('commonSettings')]"
@@ -311,8 +311,8 @@
                     "lbSettings": {
                         "value": "[variables('lbSettings')]"
                     },
-                    "adminPassword": {
-                        "value": "[parameters('adminPassword')]"
+                    "sshPublicKey": {
+                        "value": "[parameters('sshPublicKey')]"
                     }
                 }
             }
@@ -354,8 +354,8 @@
                     "lbSettings": {
                         "value": "[variables('lbSettings')]"
                     },
-                    "adminPassword": {
-                        "value": "[parameters('adminPassword')]"
+                     "sshPublicKey": {
+                        "value": "[parameters('sshPublicKey')]"
                     }
                 }
             }

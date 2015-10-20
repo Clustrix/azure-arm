@@ -2,8 +2,14 @@
     "adminUsername": {
         "value": "clustrix"
     },
+    "clustrixLicenseKey": {
+    	"value": "change-me"
+    },
+    "sshPublicKey": {
+    	"value": "change-me"
+    },
     "adminPassword": {
-        "value": "Clustrix123"
+        "value": "change-me"
     },
     "sqlrootPassword": {
         "value": "Clustrix123"
@@ -46,8 +52,5 @@
     },
     "clustrixClusterName": {
         "value": "ClustrixDB-cluster"
-    },
-    "clustrixLicenseKey": {
-    	"value": "dummy"
     }
 }
