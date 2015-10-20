@@ -32,15 +32,16 @@
                 "Description": "load balancer settings object"
             }
         },
-        "adminPassword": {
+        "sshPublicKey": {
             "type": "securestring",
             "metadata": {
-                "Description": "Administrator password used when provisioning virtual machines"
+                "Description": "SSH rsa public key file as a string."
             }
         }
     },
     "variables": {
-		"loadBalancerId": "[resourceId('Microsoft.Network/loadBalancers', parameters('lbSettings').loadBalancerName)]"
+		"loadBalancerId": "[resourceId('Microsoft.Network/loadBalancers', parameters('lbSettings').loadBalancerName)]",
+		"sshKeyPath": "[concat('/home/', parameters('machineSettings').adminUsername,'/.ssh/authorized_keys')]"
     },
     "resources": [
         {
@@ -105,8 +106,18 @@
                 "osProfile": {
                     "computername": "[concat(parameters('machineSettings').machineNamePrefix, 'member', parameters('machineSettings').machineIndex)]",
                     "adminUsername": "[parameters('machineSettings').adminUsername]",
-                    "adminPassword": "[parameters('adminPassword')]"
-                },
+                    "linuxConfiguration": {
+            			"disablePasswordAuthentication": "true",
+            			"ssh": {
+              				"publicKeys": [
+                			{
+                  				"path": "[variables('sshKeyPath')]",
+                  				"keyData": "[parameters('sshPublicKey')]"
+                			}
+              				]
+            			}
+                	}
+                }
                 "storageProfile": {
                     "imageReference": "[parameters('machineSettings').osImageReference]",
                     "osDisk": {

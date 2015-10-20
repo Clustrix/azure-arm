@@ -8,12 +8,12 @@
                 "description": "Administrator user name used when provisioning virtual machines"
             }
         },
-        "adminPassword": {
-            "type": "securestring",
-            "metadata": {
-                "description": "Administrator password used when provisioning virtual machines"
-            }
-        },
+        "sshPublicKey": {
+			"type": "securestring",
+			"metadata": {
+				"description": "This field must be a valid SSH public key."
+			}
+		},
         "sqlrootPassword": {
             "type": "securestring",
             "metadata": {
@@ -264,8 +264,8 @@
                     "machineSettings": {
                         "value": "[variables('machineSettings')]"
                     },
-                    "adminPassword": {
-                        "value": "[parameters('adminPassword')]"
+                    "sshPublicKey": {
+                        "value": "[parameters('sshPublicKey')]"
                     }
                 }
             }
@@ -311,8 +311,8 @@
                     "lbSettings": {
                         "value": "[variables('lbSettings')]"
                     },
-                    "adminPassword": {
-                        "value": "[parameters('adminPassword')]"
+                    "sshPublicKey": {
+                        "value": "[parameters('sshPublicKey')]"
                     }
                 }
             }
@@ -354,8 +354,8 @@
                     "lbSettings": {
                         "value": "[variables('lbSettings')]"
                     },
-                    "adminPassword": {
-                        "value": "[parameters('adminPassword')]"
+                     "sshPublicKey": {
+                        "value": "[parameters('sshPublicKey')]"
                     }
                 }
             }

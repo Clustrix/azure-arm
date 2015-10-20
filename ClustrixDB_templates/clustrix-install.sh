@@ -53,6 +53,7 @@ help()
     echo "-c Number of instances"
     echo "-i Sequential node index (starting from 0)"
     echo "-p Private IP address prefix"
+    echo "-f form a cluster after install
     echo "-k ClustrixDB license key"
     echo "-s SQL root user password"
     echo "-l (Indicator of the last node)"
@@ -193,12 +194,6 @@ install_clx()
     echo 'export PATH=$PATH:/opt/clustrix/bin' >> ~clustrix/.bash_profile
     echo 'export PATH=$PATH:/opt/clustrix/bin' >> ~root/.bash_profile
 
-    # update clxnode.conf and comment out the line for backend address 
-    #sed -i "/BACKEND_ADDR/s/^/#/" /etc/clustrix/clxnode.conf
-
-    # hack the planet and add a loop in clustrix init file to ensure /mnt/resource is mounted:
-    #sed -i '/UPSTART_NAME=clustrix/a while ! mountpoint \/mnt\/resource ; do sleep 1; echo "wait until resource disk is mounted";  done' /etc/init.d/clustrix
-
     log "setup script completed successfully on ${HOSTNAME}."
 }
  
@@ -206,19 +201,24 @@ setup_cluster()
 {
     log "starting cluster setup on ${HOSTNAME}" 
     #myip=`ifconfig eth0 | grep inet\ addr | awk '{print $2}' | cut -b 6-20`
-    myip="$IP_PREFIX$NODE_INDEX"
     # temp
-    CLX_LICENSE='{"expiration":"2015-08-27 04:22:07","company":"clustrix","email":"ablardone@clustrix.com","person":"clustrix","signature":"302c021464347ef03123e1da666c7bfba1185c86de1c20f502145a463d8cb291dbe3f377c965aee284c15682ac71"}'
+    CLX_LICENSE='{"expiration":"2015-10-27 05:21:20","signature":"302c02146f2a98e4af5fc3aabf7d5a18debb7ec11246d0ac0214387ceab358af3116a6670a464110ae3a8ebe73b1"}'
     mysql -e "SET PASSWORD FOR 'root'@'%' = PASSWORD(\"$SQLPASS\")"
     mysql -e "set global license = $CLX_LICENSE"
     mysql -e "INSERT INTO clustrix_ui.clustrix_ui_systemproperty (name) VALUES (\"install_wizard_completed\")"
     mysql -e "set global cluster_name = \"$CLUSTER_NAME\""
  
     #add nodes by ip to cluster: 
-    for ((i=$NODE_INDEX+2; i<=$NUM_NODES; i++ )); do
-        mysql -e "alter cluster add \"$IP_PREFIX$i\""
-        sleep 5
-    done
+#     for ((i=$NODE_INDEX+2; i<=$NUM_NODES; i++ )); do
+#         mysql -e "alter cluster add \"$IP_PREFIX$i\""
+#         sleep 5
+#     done
+	nodeIPs=$IP_PREFIX$NODE_INDEX+1
+	for ((i=$NODE_INDEX+2; i<=$NUM_NODES; i++ )); do
+		$nodeIPs = $nodeIPs, $IP_PREFIX$i 
+		echo $nodeIPs
+	done
+	mysql -e "alter cluster add \"$nodeIPs\""
     log "Completed cluster setup on ${HOSTNAME}"    
 }
 
