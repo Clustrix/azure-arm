@@ -30,7 +30,7 @@ VERSION="latest"
 CLUSTER_NAME="clx-cluster"
 IS_LAST_NODE=0
 NUM_NODES=1
-NODE_INDEX=0
+NODE_INDEX=1
 IP_PREFIX="10.0.0.0"
 CLUSTER='false'
 CLX_LICENSE=''
@@ -209,15 +209,15 @@ setup_cluster()
     mysql -e "set global cluster_name = \"$CLUSTER_NAME\""
  
     #add nodes by ip to cluster: 
-#     for ((i=$NODE_INDEX+2; i<=$NUM_NODES; i++ )); do
+#     for ((i=$NODE_INDEX+1; i<=$NUM_NODES; i++ )); do
 #         mysql -e "alter cluster add \"$IP_PREFIX$i\""
 #         sleep 5
 #     done
-	nodeIPs=$IP_PREFIX$NODE_INDEX+1
-	for ((i=$NODE_INDEX+2; i<=$NUM_NODES; i++ )); do
-		$nodeIPs = $nodeIPs, $IP_PREFIX$i 
-		echo $nodeIPs
+	nodeIPs="$IP_PREFIX$NODE_INDEX"
+	for ((i=$NODE_INDEX+1; i<=$NUM_NODES; i++ )); do
+		nodeIPs="$nodeIPs, $IP_PREFIX$i" 
 	done
+	echo $nodeIPs
 	mysql -e "alter cluster add \"$nodeIPs\""
     log "Completed cluster setup on ${HOSTNAME}"    
 }
