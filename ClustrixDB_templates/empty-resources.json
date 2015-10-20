@@ -26,10 +26,10 @@
                 "Description": "Machine settings object"
             }
         },
-        "adminPassword": {
+        "sshPublicKey": {
             "type": "securestring",
             "metadata": {
-                "Description": "Administrator password used when provisioning virtual machines"
+                "description": "This field must be a valid SSH public key."
             }
         }
     },

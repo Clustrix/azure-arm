@@ -8,9 +8,6 @@
     "sshPublicKey": {
     	"value": "change-me"
     },
-    "adminPassword": {
-        "value": "change-me"
-    },
     "sqlrootPassword": {
         "value": "Clustrix123"
     },
