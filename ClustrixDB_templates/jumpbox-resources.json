@@ -118,16 +118,16 @@
                     "computername": "[concat(parameters('machineSettings').machineNamePrefix, 'jumpbox')]",
                     "adminUsername": "[parameters('machineSettings').adminUsername]",
                     "linuxConfiguration": {
-            			"disablePasswordAuthentication": "true",
-            			"ssh": {
-              				"publicKeys": [
-                			{
-                  				"path": "[variables('sshKeyPath')]",
-                  				"keyData": "[parameters('sshPublicKey')]"
-                			}
-              				]
-            			}
-                	}
+                        "disablePasswordAuthentication": "true",
+                        "ssh": {
+                            "publicKeys": [
+                            {
+                                "path": "[variables('sshKeyPath')]",
+                                "keyData": "[parameters('sshPublicKey')]"
+                            }
+                            ]
+                        }
+                    }
                 },
                 "storageProfile": {
                     "imageReference": "[parameters('machineSettings').osImageReference]",

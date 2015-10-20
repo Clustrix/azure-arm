@@ -40,8 +40,8 @@
         }
     },
     "variables": {
-		"loadBalancerId": "[resourceId('Microsoft.Network/loadBalancers', parameters('lbSettings').loadBalancerName)]",
-		"sshKeyPath": "[concat('/home/', parameters('machineSettings').adminUsername,'/.ssh/authorized_keys')]"
+        "loadBalancerId": "[resourceId('Microsoft.Network/loadBalancers', parameters('lbSettings').loadBalancerName)]",
+        "sshKeyPath": "[concat('/home/', parameters('machineSettings').adminUsername,'/.ssh/authorized_keys')]"
     },
     "resources": [
         {
@@ -70,10 +70,10 @@
                             "privateIPAllocationMethod": "Static",
                             "privateIPAddress": "[concat(parameters('networkSettings').machineIpPrefix, parameters('machineSettings').machineIndex)]",
                             "loadBalancerBackendAddressPools": [
-                            	{
-                        			"id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('lbSettings').loadBalancerName), '/backendAddressPools/clxlbBackendPool1')]"
-                				}
-                			],
+                                {
+                                    "id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('lbSettings').loadBalancerName), '/backendAddressPools/clxlbBackendPool1')]"
+                                }
+                            ],
                             "publicIPAddress": {
                                 "id": "[resourceId('Microsoft.Network/publicIPAddresses',concat('clxPublicIP', parameters('machineSettings').machineIndex))]"
                             },
@@ -107,16 +107,16 @@
                     "computername": "[concat(parameters('machineSettings').machineNamePrefix, 'member', parameters('machineSettings').machineIndex)]",
                     "adminUsername": "[parameters('machineSettings').adminUsername]",
                     "linuxConfiguration": {
-            			"disablePasswordAuthentication": "true",
-            			"ssh": {
-              				"publicKeys": [
-                			{
-                  				"path": "[variables('sshKeyPath')]",
-                  				"keyData": "[parameters('sshPublicKey')]"
-                			}
-              				]
-            			}
-                	}
+                        "disablePasswordAuthentication": "true",
+                        "ssh": {
+                            "publicKeys": [
+                            {
+                                "path": "[variables('sshKeyPath')]",
+                                "keyData": "[parameters('sshPublicKey')]"
+                            }
+                            ]
+                        }
+                    }
                 }
                 "storageProfile": {
                     "imageReference": "[parameters('machineSettings').osImageReference]",

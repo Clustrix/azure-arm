@@ -9,11 +9,11 @@
             }
         },
         "sshPublicKey": {
-			"type": "securestring",
-			"metadata": {
-				"description": "This field must be a valid SSH public key."
-			}
-		},
+            "type": "securestring",
+            "metadata": {
+                "description": "This field must be a valid SSH public key."
+            }
+        },
         "sqlrootPassword": {
             "type": "securestring",
             "metadata": {
@@ -75,11 +75,11 @@
             }
         },
         "loadBalancerName": {
-      		"type": "string",
-      		"metadata": {
-        	"description": "This is the name of the load balancer"
-      		}
-    	},
+            "type": "string",
+            "metadata": {
+            "description": "This is the name of the load balancer"
+            }
+        },
         "formCluster": {
             "type": "string",
             "defaultValue": "true",
@@ -286,7 +286,7 @@
                 "templateLink": {
                     "uri": "[variables('clusterSpec').vmTemplate]",
                     "contentVersion": "1.0.0.0"
-                },	
+                },  
                 "parameters": {
                     "commonSettings": {
                         "value": "[variables('commonSettings')]"
