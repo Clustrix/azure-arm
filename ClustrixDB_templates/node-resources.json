@@ -117,7 +117,7 @@
                             ]
                         }
                     }
-                }
+                },
                 "storageProfile": {
                     "imageReference": "[parameters('machineSettings').osImageReference]",
                     "osDisk": {
