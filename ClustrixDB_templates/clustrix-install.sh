@@ -53,7 +53,7 @@ help()
     echo "-c Number of instances"
     echo "-i Sequential node index (starting from 0)"
     echo "-p Private IP address prefix"
-    echo "-f form a cluster after install
+    echo "-f form a cluster after install"
     echo "-k ClustrixDB license key"
     echo "-s SQL root user password"
     echo "-l (Indicator of the last node)"
@@ -204,7 +204,7 @@ setup_cluster()
     # temp
     CLX_LICENSE='{"expiration":"2015-10-27 05:21:20","signature":"302c02146f2a98e4af5fc3aabf7d5a18debb7ec11246d0ac0214387ceab358af3116a6670a464110ae3a8ebe73b1"}'
     mysql -e "SET PASSWORD FOR 'root'@'%' = PASSWORD(\"$SQLPASS\")"
-    mysql -e "set global license = $CLX_LICENSE"
+    mysql -e "set global license = \"$CLX_LICENSE\""
     mysql -e "INSERT INTO clustrix_ui.clustrix_ui_systemproperty (name) VALUES (\"install_wizard_completed\")"
     mysql -e "set global cluster_name = \"$CLUSTER_NAME\""
  
