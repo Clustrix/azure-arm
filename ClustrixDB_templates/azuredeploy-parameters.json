@@ -11,7 +11,7 @@
     "sqlrootPassword": {
         "value": "Clustrix123"
     },
-    "storageAccountName": {
+    "storageActName": {
         "value": "armtest3"
     },
     "location": {

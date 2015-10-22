@@ -60,7 +60,6 @@
             "location": "[parameters('commonSettings').location]",
             "dependsOn": [
                 "[concat('Microsoft.Network/publicIPAddresses/', concat('clxPublicIP', parameters('machineSettings').machineIndex))]",
-                "[concat('Microsoft.Network/networkSecurityGroups/', 'clxSecurityGroup')]"
             ],
             "properties": {
                 "ipConfigurations": [

@@ -20,7 +20,7 @@
                 "description": "SQL root password for the database"
             }
         },
-        "storageAccountName": {
+        "storageActName": {
             "type": "string",
             "metadata": {
                 "description": "Unique namespace for the Storage Account where the Virtual Machine's disks will be placed"
@@ -175,9 +175,9 @@
             "location": "[parameters('location')]"
         },
         "storageSettings": {
-            "vhdStorageAccountName": "[parameters('storageAccountName')]",
+            "vhdstorageActName": "[parameters('storageActName')]",
             "vhdContainerName": "[variables('vmStorageAccountContainerName')]",
-            "destinationVhdsContainer": "[concat('https://', parameters('storageAccountName'), variables('vmStorageAccountDomain'), '/', variables('vmStorageAccountContainerName'), '/')]"
+            "destinationVhdsContainer": "[concat('https://', parameters('storageActName'), variables('vmStorageAccountDomain'), '/', variables('vmStorageAccountContainerName'), '/')]"
         },
         "networkSettings": {
             "virtualNetworkName": "[parameters('virtualNetworkName')]",
