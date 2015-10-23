@@ -354,7 +354,7 @@
                             "machineNamePrefix": "[variables('machineSettings').machineNamePrefix]",
                             "osImageReference": "[variables('machineSettings').osImageReference]",
                             "vmSize": "[variables('clusterSpec').vmSizeMember]",
-                            "ipOffset": "0",
+                            "ipOffset": 0,
                             "machineIndex": "1",
                             "vmScripts": "[variables('vmScripts').scriptsToDownload]",
                             "commandToExecute": "[concat(variables('vmScripts').setupCommand, ' -s ', parameters('sqlrootPassword'), ' -f ', parameters('formCluster'))]"
