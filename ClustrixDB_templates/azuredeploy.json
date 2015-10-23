@@ -67,11 +67,18 @@
                 "description": "Address space for the virtual network subnet"
             }
         },
-        "nodeAddressPrefix": {
+        "firstNodeIP": {
             "type": "string",
-            "defaultValue": "10.0.10.1",
+            "defaultValue": "10.0.0.10",
             "metadata": {
-                "description": "The IP address prefix that will be used for constructing a static private IP address for each node in the cluster"
+                "description": "The IP address that will be assigned to the first node of the cluster. The other nodes are assigned sequential IPs from that IP. This IP needs to be on the same subnet as the VNET used for this deployment."
+            }
+        },
+        "loadBalancerIP": {
+            "type": "string",
+            "defaultValue": "10.0.0.200",
+            "metadata": {
+                "description": "The IP address assigned to the load balancer. This IP needs to be on the same subnet as the VNET used for this deployment."
             }
         },
         "loadBalancerName": {
@@ -185,11 +192,11 @@
             "subnetName": "[parameters('subnetName')]",
             "subnetPrefix": "[parameters('subnetPrefix')]",
             "subnetRef": "[concat(variables('vnetID'), '/subnets/', parameters('subnetName'))]",
-            "machineIpPrefix": "[parameters('nodeAddressPrefix')]"
+            "firstUsableIp": "[parameters('firstNodeIP')]"
         },
         "lbSettings": {
             "loadBalancerName": "[parameters('loadBalancerName')]",
-            "loadBalancerIp": "[concat(parameters('nodeAddressPrefix'), '0')]"
+            "loadBalancerIp": "[parameters('loadBalancerIP')]"
         },
         "machineSettings": {
             "adminUsername": "[parameters('adminUsername')]",
@@ -202,7 +209,7 @@
             }
         },
         "clusterSpec": "[variables(concat('tshirtSize', parameters('tshirtSize')))]",
-        "installCommand": "[concat('clustrix-install.sh -n ', parameters('clustrixClusterName'), ' -v ', parameters('clxVersion'), ' -k ', parameters('clustrixLicenseKey'), ' -c ', variables('clusterSpec').numberOfNodes, ' -p ', variables('networkSettings').machineIpPrefix)]",
+        "installCommand": "[concat('clustrix-install.sh -n ', parameters('clustrixClusterName'), ' -v ', parameters('clxVersion'), ' -k ', parameters('clustrixLicenseKey'), ' -c ', variables('clusterSpec').numberOfNodes, ' -p ', variables('networkSettings').firstNodeIP)]",
         "vmScripts": {
             "scriptsToDownload": [
                 "[concat(variables('scriptUrl'), 'clustrix-install.sh')]"
@@ -303,9 +310,10 @@
                             "machineNamePrefix": "[variables('machineSettings').machineNamePrefix]",
                             "osImageReference": "[variables('machineSettings').osImageReference]",
                             "vmSize": "[variables('clusterSpec').vmSizeMember]",
+                            "ipOffset": "[copyindex(1)]",
                             "machineIndex": "[copyindex(2)]",
                             "vmScripts": "[variables('vmScripts').scriptsToDownload]",
-                            "commandToExecute": "[concat(variables('vmScripts').installCommand, ' -i ', copyindex(2))]"
+                            "commandToExecute": "[concat(variables('vmScripts').installCommand)]"
                         }
                     },
                     "lbSettings": {
@@ -346,9 +354,10 @@
                             "machineNamePrefix": "[variables('machineSettings').machineNamePrefix]",
                             "osImageReference": "[variables('machineSettings').osImageReference]",
                             "vmSize": "[variables('clusterSpec').vmSizeMember]",
+                            "ipOffset": "0",
                             "machineIndex": "1",
                             "vmScripts": "[variables('vmScripts').scriptsToDownload]",
-                            "commandToExecute": "[concat(variables('vmScripts').setupCommand, ' -i ', '1', ' -s ', parameters('sqlrootPassword'), ' -f ', parameters('formCluster'))]"
+                            "commandToExecute": "[concat(variables('vmScripts').setupCommand, ' -s ', parameters('sqlrootPassword'), ' -f ', parameters('formCluster'))]"
                         }
                     },
                     "lbSettings": {

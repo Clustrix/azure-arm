@@ -29,14 +29,17 @@
     "subnetPrefix": {
         "value": "10.0.10.0/24"
     },
-    "nodeAddressPrefix": {
-        "value": "10.0.10.1"
+    "firstNodeIP": {
+        "value": "10.0.10.10"
     },
     "formCluster": {
     	"value":"true"
     },
     "loadBalancerName": {
     	"value": "clxLB"
+    },
+    "loadBalancerIP": {
+        "value": "10.0.10.200"
     },
     "jumpbox": {
         "value": "Disabled"

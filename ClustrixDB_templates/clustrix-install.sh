@@ -30,15 +30,16 @@ VERSION="latest"
 CLUSTER_NAME="clx-cluster"
 IS_LAST_NODE=0
 NUM_NODES=1
-NODE_INDEX=1
 IP_PREFIX="10.0.0.0"
 CLUSTER='false'
 CLX_LICENSE=''
 SQLPASS='clustrix'
 LOGGING_KEY="c75b83f3-fa3a-4e35-8945-e2b19d15bae9"
+IP_LIST="" 
 # clustrix mount path 
 data_path='/mnt/resource'
 log_path='/mnt/resource/log'
+
 
 
 ########################################################
@@ -51,7 +52,6 @@ help()
     echo "-n Cluster name"
     echo "-v ClustrixDB version"
     echo "-c Number of instances"
-    echo "-i Sequential node index (starting from 0)"
     echo "-p Private IP address prefix"
     echo "-f form a cluster after install"
     echo "-k ClustrixDB license key"
@@ -89,10 +89,7 @@ while getopts :n:v:c:i:p:f:k:s:lh optname; do
         ;;
     c) # Number of instances
         NUM_NODES=${OPTARG}
-        ;;      
-    i) # Sequential node index
-        NODE_INDEX=${OPTARG}
-        ;;              
+        ;;                    
     p) # Private IP address prefix
         IP_PREFIX=${OPTARG}
         ;;
@@ -208,18 +205,27 @@ setup_cluster()
     mysql -e "INSERT INTO clustrix_ui.clustrix_ui_systemproperty (name) VALUES (\"install_wizard_completed\")"
     mysql -e "set global cluster_name = \"$CLUSTER_NAME\""
  
-    #add nodes by ip to cluster: 
-#     for ((i=$NODE_INDEX+1; i<=$NUM_NODES; i++ )); do
-#         mysql -e "alter cluster add \"$IP_PREFIX$i\""
-#         sleep 5
-#     done
-	nodeIPs="$IP_PREFIX$NODE_INDEX"
-	for ((i=$NODE_INDEX+1; i<=$NUM_NODES; i++ )); do
-		nodeIPs="$nodeIPs, $IP_PREFIX$i" 
-	done
-	echo $nodeIPs
-	mysql -e "alter cluster add \"$nodeIPs\""
+	get_seq_ips $IP_PREFIX $NUM_NODES
+	mysql -e "alter cluster add $IP_LIST COORDINATE"
     log "Completed cluster setup on ${HOSTNAME}"    
+}
+
+get_seq_ips()
+{
+    start="$1"
+    num=$2
+
+    octet1=$(echo $start | awk -F'.' '{print $1}')
+    octet2=$(echo $start | awk -F'.' '{print $2}')
+    octet3=$(echo $start | awk -F'.' '{print $3}')
+    octet4=$(echo $start | awk -F'.' '{print $4}')
+
+    IP_LIST="'$start'"
+    for ((i=1; i<$num; i++ )); do
+        let newOctet4="($octet4+$i) % 255"
+        let newOctet3="$octet3+(($octet4+$i)/255)"
+        IP_LIST="$IP_LIST, '$octet1.$octet2.$newOctet3.$newOctet4'"
+    done
 }
 
 logfile=/var/log/install.$$.log
@@ -229,8 +235,7 @@ setup_storage
 tweek_os
 install_clx
 if [ "$IS_LAST_NODE" -eq 1 ] && [ "$CLUSTER" = true ]; then
-    log "waiting 30 secs before cluster setup"
-    sleep 30
+    log "starting cluster setup"
     setup_cluster
 fi
 log "All Done !"
