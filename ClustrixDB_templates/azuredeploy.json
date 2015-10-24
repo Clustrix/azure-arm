@@ -209,7 +209,7 @@
             }
         },
         "clusterSpec": "[variables(concat('tshirtSize', parameters('tshirtSize')))]",
-        "installCommand": "[concat('clustrix-install.sh -n ', parameters('clustrixClusterName'), ' -v ', parameters('clxVersion'), ' -k ', parameters('clustrixLicenseKey'), ' -c ', variables('clusterSpec').numberOfNodes, ' -p ', variables('networkSettings').firstUsableIp)]",
+        "installCommand": "[concat('clustrix-install.sh -n ', parameters('clustrixClusterName'), ' -v ', parameters('clxVersion'), ' -k ', base64(parameters('clustrixLicenseKey')), ' -c ', variables('clusterSpec').numberOfNodes, ' -p ', variables('networkSettings').firstUsableIp)]",
         "vmScripts": {
             "scriptsToDownload": [
                 "[concat(variables('scriptUrl'), 'clustrix-install.sh')]"
