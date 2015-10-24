@@ -47,27 +47,6 @@
         },
         {
             "apiVersion": "2015-05-01-preview",
-            "type": "Microsoft.Network/virtualNetworks",
-            "name": "[parameters('networkSettings').virtualNetworkName]",
-            "location": "[parameters('commonSettings').location]",
-            "properties": {
-                "addressSpace": {
-                    "addressPrefixes": [
-                        "[parameters('networkSettings').addressPrefix]"
-                    ]
-                },
-                "subnets": [
-                    {
-                        "name": "[parameters('networkSettings').subnetName]",
-                        "properties": {
-                            "addressPrefix": "[parameters('networkSettings').subnetPrefix]"
-                        }
-                    }
-                ]
-            }
-        },
-        {
-            "apiVersion": "2015-05-01-preview",
             "type": "Microsoft.Network/networkSecurityGroups",
             "name": "clxSecurityGroup",
             "location": "[parameters('commonSettings').location]",
@@ -85,6 +64,47 @@
                             "access": "Allow",
                             "priority": 100,
                             "direction": "Inbound"
+                        }
+                    },
+        			{
+                        "name": "HTTP",
+                        "properties": {
+                            "description": "Allows HTTP traffic",
+                            "protocol": "Tcp",
+                            "sourcePortRange": "80",
+                            "destinationPortRange": "80",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 100,
+                            "direction": "Inbound"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "apiVersion": "2015-05-01-preview",
+            "type": "Microsoft.Network/virtualNetworks",
+            "name": "[parameters('networkSettings').virtualNetworkName]",
+            "location": "[parameters('commonSettings').location]",
+            "dependsOn": [
+                "[concat('Microsoft.Network/networkSecurityGroups/', 'clxSecurityGroup')]"
+            ],
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "[parameters('networkSettings').addressPrefix]"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "[parameters('networkSettings').subnetName]",
+                        "properties": {
+                            "addressPrefix": "[parameters('networkSettings').subnetPrefix]",
+                            "networkSecurityGroup": {
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'clxSecurityGroup')]"
+                            }
                         }
                     }
                 ]
@@ -118,6 +138,7 @@
 				],
 				"loadBalancingRules": [
 				{
+					"Name": "clxlb-ssh",
 					"properties": {
 						"frontendIPConfiguration": {
 							"id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('lbSettings').loadBalancerName), '/frontendIpConfigurations/LoadBalancerFrontend')]"
@@ -132,8 +153,25 @@
 						"frontendPort": 3306,
 						"backendPort": 3306,
 						"idleTimeoutInMinutes": 30
-					},
-					"Name": "clxlb-rule"
+					}
+				},
+				{
+					"Name": "clxlb-http",
+					"properties": {
+						"frontendIPConfiguration": {
+							"id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('lbSettings').loadBalancerName), '/frontendIpConfigurations/LoadBalancerFrontend')]"
+						},
+						"backendAddressPool": {
+							"id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('lbSettings').loadBalancerName), '/backendAddressPools/clxlbBackendPool1')]"
+						},
+						"probe": {
+							"id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('lbSettings').loadBalancerName), '/probes/clxlb-probe')]"
+						},
+						"protocol": "Tcp",
+						"frontendPort": 80,
+						"backendPort": 80,
+						"idleTimeoutInMinutes": 30
+					}
 				}
 				],
         		"probes": [
