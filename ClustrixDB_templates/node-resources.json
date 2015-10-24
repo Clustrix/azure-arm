@@ -1,163 +1,163 @@
-{ 
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-    "contentVersion": "1.0.0.0",
-    "parameters": {
-        "commonSettings": {
-            "type": "object",
-            "metadata": {
-                "Description": "Common settings object"
-            }
-        },
-        "storageSettings": {
-            "type": "object",
-            "metadata": {
-                "Description": "Storage settings object"
-            }
-        },
-        "networkSettings": {
-            "type": "object",
-            "metadata": {
-                "Description": "Network settings object"
-            }
-        },
-        "machineSettings": {
-            "type": "object",
-            "metadata": {
-                "Description": "Machine settings object"
-            }
-        },
-         "lbSettings": {
-            "type": "object",
-            "metadata": {
-                "Description": "load balancer settings object"
-            }
-        },
-        "sshPublicKey": {
-            "type": "securestring",
-            "metadata": {
-                "Description": "SSH rsa public key file as a string."
-            }
-        }
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "commonSettings": {
+      "type": "object",
+      "metadata": {
+        "Description": "Common settings object"
+      }
     },
-    "variables": {
-        "loadBalancerId": "[resourceId('Microsoft.Network/loadBalancers', parameters('lbSettings').loadBalancerName)]",
-        "sshKeyPath": "[concat('/home/', parameters('machineSettings').adminUsername,'/.ssh/authorized_keys')]",
-        "sa": "[parameters('networkSettings').firstUsableIp]",
-        "ipOctet1": "[concat(split(variables('sa'), '.')[0], '.', split(variables('sa'), '.')[1], '.')]",
-        "ipOctet2": "[int(split(variables('sa'), '.')[2])]",
-        "ipOctet3": "[int(split(variables('sa'), '.')[3])]"
+    "storageSettings": {
+      "type": "object",
+      "metadata": {
+        "Description": "Storage settings object"
+      }
     },
-    "resources": [
-        {
-            "apiVersion": "2015-05-01-preview",
-            "type": "Microsoft.Network/publicIPAddresses",
-            "name": "[concat('clxPublicIP', parameters('machineSettings').machineIndex)]",
-            "location": "[parameters('commonSettings').location]",
+    "networkSettings": {
+      "type": "object",
+      "metadata": {
+        "Description": "Network settings object"
+      }
+    },
+    "machineSettings": {
+      "type": "object",
+      "metadata": {
+        "Description": "Machine settings object"
+      }
+    },
+    "lbSettings": {
+      "type": "object",
+      "metadata": {
+        "Description": "load balancer settings object"
+      }
+    },
+    "sshPublicKey": {
+      "type": "securestring",
+      "metadata": {
+        "Description": "SSH rsa public key file as a string."
+      }
+    }
+  },
+  "variables": {
+    "loadBalancerId": "[resourceId('Microsoft.Network/loadBalancers', parameters('lbSettings').loadBalancerName)]",
+    "sshKeyPath": "[concat('/home/', parameters('machineSettings').adminUsername,'/.ssh/authorized_keys')]",
+    "sa": "[parameters('networkSettings').firstUsableIp]",
+    "ipOctet1": "[concat(split(variables('sa'), '.')[0], '.', split(variables('sa'), '.')[1], '.')]",
+    "ipOctet2": "[int(split(variables('sa'), '.')[2])]",
+    "ipOctet3": "[int(split(variables('sa'), '.')[3])]"
+  },
+  "resources": [
+    {
+      "apiVersion": "2015-05-01-preview",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "name": "[concat('clxPublicIP', parameters('machineSettings').machineIndex)]",
+      "location": "[parameters('commonSettings').location]",
+      "properties": {
+        "publicIPAllocationMethod": "Dynamic"
+      }
+    },
+    {
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[concat('nicMember', parameters('machineSettings').machineIndex)]",
+      "apiVersion": "2015-05-01-preview",
+      "location": "[parameters('commonSettings').location]",
+      "dependsOn": [
+        "[concat('Microsoft.Network/publicIPAddresses/', concat('clxPublicIP', parameters('machineSettings').machineIndex))]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
             "properties": {
-                "publicIPAllocationMethod": "Dynamic"
-            }
-        },
-        {
-            "type": "Microsoft.Network/networkInterfaces",
-            "name": "[concat('nicMember', parameters('machineSettings').machineIndex)]",
-            "apiVersion": "2015-05-01-preview",
-            "location": "[parameters('commonSettings').location]",
-            "dependsOn": [
-                "[concat('Microsoft.Network/publicIPAddresses/', concat('clxPublicIP', parameters('machineSettings').machineIndex))]"
-            ],
-            "properties": {
-                "ipConfigurations": [
-                    {
-                        "name": "ipconfig1",
-                        "properties": {
-                            "privateIPAllocationMethod": "Static",
-                            "privateIPAddress": "[concat(variables('ipOctet1'), add(variables('ipOctet2'), div(add(variables('ipOctet3'), parameters('machineSettings').ipOffset), 255)), '.', mod(add(variables('ipOctet3'), parameters('machineSettings').ipOffset), 255))]",
-                            "loadBalancerBackendAddressPools": [
-                                {
-                                    "id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('lbSettings').loadBalancerName), '/backendAddressPools/clxlbBackendPool1')]"
-                                }
-                            ],
-                            "publicIPAddress": {
-                                "id": "[resourceId('Microsoft.Network/publicIPAddresses',concat('clxPublicIP', parameters('machineSettings').machineIndex))]"
-                            },
-                            "networkSecurityGroup": {
-                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'clxSecurityGroup')]"
-                            },
-                            "subnet": {
-                                "id": "[parameters('networkSettings').subnetRef]"
-                            }
-                        }
-                    }
-                ]
-            }
-        },
-        {
-            "type": "Microsoft.Compute/virtualMachines",
-            "name": "[concat('clxnode', parameters('machineSettings').machineIndex)]",
-            "apiVersion": "2015-05-01-preview",
-            "location": "[parameters('commonSettings').location]",
-            "dependsOn": [
-                "[concat('Microsoft.Network/networkInterfaces/', 'nicMember', parameters('machineSettings').machineIndex)]"
-            ],
-            "properties": {
-                "availabilitySet": {
-                    "id": "[resourceId('Microsoft.Compute/availabilitySets', parameters('commonSettings').availabilitySetName)]"
-                },
-                "hardwareProfile": {
-                    "vmSize": "[parameters('machineSettings').vmSize]"
-                },
-                "osProfile": {
-                    "computername": "[concat(parameters('machineSettings').machineNamePrefix, 'member', parameters('machineSettings').machineIndex)]",
-                    "adminUsername": "[parameters('machineSettings').adminUsername]",
-                    "linuxConfiguration": {
-                        "disablePasswordAuthentication": "true",
-                        "ssh": {
-                            "publicKeys": [
-                            {
-                                "path": "[variables('sshKeyPath')]",
-                                "keyData": "[parameters('sshPublicKey')]"
-                            }
-                            ]
-                        }
-                    }
-                },
-                "storageProfile": {
-                    "imageReference": "[parameters('machineSettings').osImageReference]",
-                    "osDisk": {
-                        "name": "osdisk",
-                        "vhd": {
-                            "uri": "[concat(parameters('storageSettings').destinationVhdsContainer, 'node-os-disk' , parameters('machineSettings').machineIndex, '.vhd')]"
-                        },
-                        "caching": "ReadWrite",
-                        "createOption": "FromImage"
-                    }
-                },
-                "networkProfile": {
-                    "networkInterfaces": [
-                        {
-                            "id": "[resourceId('Microsoft.Network/networkInterfaces',concat('nicMember', parameters('machineSettings').machineIndex))]"
-                        }
-                    ]
+              "privateIPAllocationMethod": "Static",
+              "privateIPAddress": "[concat(variables('ipOctet1'), add(variables('ipOctet2'), div(add(variables('ipOctet3'), parameters('machineSettings').ipOffset), 255)), '.', mod(add(variables('ipOctet3'), parameters('machineSettings').ipOffset), 255))]",
+              "loadBalancerBackendAddressPools": [
+                {
+                  "id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('lbSettings').loadBalancerName), '/backendAddressPools/clxlbBackendPool1')]"
                 }
+              ],
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses',concat('clxPublicIP', parameters('machineSettings').machineIndex))]"
+              },
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'clxSecurityGroup')]"
+              },
+              "subnet": {
+                "id": "[parameters('networkSettings').subnetRef]"
+              }
             }
+          }
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines",
+      "name": "[concat('clxnode', parameters('machineSettings').machineIndex)]",
+      "apiVersion": "2015-05-01-preview",
+      "location": "[parameters('commonSettings').location]",
+      "dependsOn": [
+        "[concat('Microsoft.Network/networkInterfaces/', 'nicMember', parameters('machineSettings').machineIndex)]"
+      ],
+      "properties": {
+        "availabilitySet": {
+          "id": "[resourceId('Microsoft.Compute/availabilitySets', parameters('commonSettings').availabilitySetName)]"
         },
-        {
-            "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat('clxnode', parameters('machineSettings').machineIndex, '/installscript')]",
-            "apiVersion": "2015-05-01-preview",
-            "location": "[parameters('commonSettings').location]",
-            "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines/', 'clxnode', parameters('machineSettings').machineIndex)]"
-            ],
-            "properties": {
-                "publisher": "Microsoft.OSTCExtensions",
-                "type": "CustomScriptForLinux",
-                "typeHandlerVersion": "1.3",
-                "settings": {
-                    "fileUris": "[parameters('machineSettings').vmScripts]",
-                    "commandToExecute": "[parameters('machineSettings').commandToExecute]"
+        "hardwareProfile": {
+          "vmSize": "[parameters('machineSettings').vmSize]"
+        },
+        "osProfile": {
+          "computername": "[concat(parameters('machineSettings').machineNamePrefix, 'member', parameters('machineSettings').machineIndex)]",
+          "adminUsername": "[parameters('machineSettings').adminUsername]",
+          "linuxConfiguration": {
+            "disablePasswordAuthentication": "true",
+            "ssh": {
+              "publicKeys": [
+                {
+                  "path": "[variables('sshKeyPath')]",
+                  "keyData": "[parameters('sshPublicKey')]"
                 }
+              ]
             }
+          }
+        },
+        "storageProfile": {
+          "imageReference": "[parameters('machineSettings').osImageReference]",
+          "osDisk": {
+            "name": "osdisk",
+            "vhd": {
+              "uri": "[concat(parameters('storageSettings').destinationVhdsContainer, 'node-os-disk' , parameters('machineSettings').machineIndex, '.vhd')]"
+            },
+            "caching": "ReadWrite",
+            "createOption": "FromImage"
+          }
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat('nicMember', parameters('machineSettings').machineIndex))]"
+            }
+          ]
         }
-    ]
+      }
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat('clxnode', parameters('machineSettings').machineIndex, '/installscript')]",
+      "apiVersion": "2015-05-01-preview",
+      "location": "[parameters('commonSettings').location]",
+      "dependsOn": [
+        "[concat('Microsoft.Compute/virtualMachines/', 'clxnode', parameters('machineSettings').machineIndex)]"
+      ],
+      "properties": {
+        "publisher": "Microsoft.OSTCExtensions",
+        "type": "CustomScriptForLinux",
+        "typeHandlerVersion": "1.3",
+        "settings": {
+          "fileUris": "[parameters('machineSettings').vmScripts]",
+          "commandToExecute": "[parameters('machineSettings').commandToExecute]"
+        }
+      }
+    }
+  ]
 }
