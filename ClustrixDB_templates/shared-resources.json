@@ -64,20 +64,6 @@
               "priority": 100,
               "direction": "Inbound"
             }
-          },
-          {
-            "name": "HTTP",
-            "properties": {
-              "description": "Allows HTTP traffic",
-              "protocol": "Tcp",
-              "sourcePortRange": "80",
-              "destinationPortRange": "80",
-              "sourceAddressPrefix": "*",
-              "destinationAddressPrefix": "*",
-              "access": "Allow",
-              "priority": 200,
-              "direction": "Inbound"
-            }
           }
         ]
       }
