@@ -100,7 +100,7 @@
           {
             "name": "[parameters('networkSettings').subnetName]",
             "properties": {
-              "addressPrefix": "[parameters('networkSettings').subnetPrefix]"
+              "addressPrefix": "[parameters('networkSettings').subnetPrefix]",
               "networkSecurityGroup": {
                  "id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'clxSecurityGroup')]"
               }
