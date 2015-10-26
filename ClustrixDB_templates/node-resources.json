@@ -80,15 +80,15 @@
               "publicIPAddress": {
                 "id": "[resourceId('Microsoft.Network/publicIPAddresses',concat('clxPublicIP', parameters('machineSettings').machineIndex))]"
               },
-              "networkSecurityGroup": {
-                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'clxSecurityGroup')]"
-              },
               "subnet": {
                 "id": "[parameters('networkSettings').subnetRef]"
               }
             }
           }
-        ]
+        ],
+        "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'clxSecurityGroup')]"
+        }
       }
     },
     {
