@@ -2,6 +2,25 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
+    "tshirtSize": {
+      "type": "string",
+      "defaultValue": "Small",
+      "allowedValues": [
+        "Small",
+        "Medium",
+        "Large"
+      ],
+      "metadata": {
+        "description": "T-shirt size of the ClustrixDB deployment"
+      }
+    },
+    "numberOfNodes": {
+      "type": "int",
+      "defaultValue": 3,
+      "metadata": {
+        "description": "Number of ClustrixDB nodes to deploy"
+      }
+    },
     "adminUsername": {
       "type": "string",
       "metadata": {
@@ -109,21 +128,17 @@
         "description": "The flag allowing to enable or disable provisioning of the jumpbox VM that can be used to access the Clustrix nodes and as a backup target"
       }
     },
-    "tshirtSize": {
-      "type": "string",
-      "defaultValue": "Small",
-      "allowedValues": [
-        "Small",
-        "Medium",
-        "Large"
-      ],
-      "metadata": {
-        "description": "T-shirt size of the ClustrixDB deployment"
-      }
-    },
     "clxVersion": {
       "type": "string",
       "defaultValue": "latest",
+      "allowedValues": [
+        "latest",
+        "7.0.1",
+        "7.0",
+        "v6.0.2.11596",
+        "v6.0.1.11576",
+        "v6.0.11563"
+      ],
       "metadata": {
         "description": "The version of the clxnode package to be deployed on the cluster (or use 'latest' to pull in the latest release)"
       }
@@ -147,20 +162,20 @@
     "_comment0": "/* T-shirt sizes may vary for different reasons, and some customers may want to modify these - so feel free to go ahead and define your favorite t-shirts */",
     "tshirtSizeSmall": {
       "vmSizeMember": "Standard_DS13",
-      "numberOfNodes": 3,
-      "numNodesMinusLast": 2,
+      "numberOfNodes": "[parameters('numberOfNodes')]",
+      "numNodesMinusLast": "sub([parameters('numberOfNodes')],1)",
       "vmTemplate": "[concat(variables('templateBaseUrl'), 'node-resources.json')]"
     },
     "tshirtSizeMedium": {
       "vmSizeMember": "Standard_G3",
-      "numberOfNodes": 3,
-      "numNodesMinusLast": 2,
+      "numberOfNodes": "[parameters('numberOfNodes')]",
+      "numNodesMinusLast": "sub([parameters('numberOfNodes')],1)",
       "vmTemplate": "[concat(variables('templateBaseUrl'), 'node-resources.json')]"
     },
     "tshirtSizeLarge": {
       "vmSizeMember": "Standard_G4",
-      "numberOfNodes": 3,
-      "numNodesMinusLast": 2,
+      "numberOfNodes": "[parameters('numberOfNodes')]",
+      "numNodesMinusLast": "sub([parameters('numberOfNodes')],1)",
       "vmTemplate": "[concat(variables('templateBaseUrl'), 'node-resources.json')]"
     },
     "imageInfo": {

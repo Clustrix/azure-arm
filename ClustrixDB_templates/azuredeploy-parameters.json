@@ -1,11 +1,17 @@
 {
+    "tshirtSize":  {
+        "value": "Small"
+    },
+    "NumberOfNodes":  {
+        "value": "3"
+    },
     "adminUsername": {
         "value": "clustrix"
     },
-    "clustrixLicenseKey": {
+    "sshPublicKey": {
     	"value": "change-me"
     },
-    "sshPublicKey": {
+    "clustrixLicenseKey": {
     	"value": "change-me"
     },
     "sqlrootPassword": {
@@ -43,9 +49,6 @@
     },
     "jumpbox": {
         "value": "Disabled"
-    },
-    "tshirtSize":  {
-        "value": "Small"
     },
     "clxVersion": {
         "value": "latest"
