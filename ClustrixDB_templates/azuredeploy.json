@@ -16,7 +16,7 @@
     },
     "numberOfNodes": {
       "type": "int",
-      "defaultValue": "3",
+      "defaultValue": 3,
       "metadata": {
         "description": "Number of ClustrixDB nodes to deploy"
       }
@@ -162,20 +162,20 @@
     "_comment0": "/* T-shirt sizes may vary for different reasons, and some customers may want to modify these - so feel free to go ahead and define your favorite t-shirts */",
     "tshirtSizeSmall": {
       "vmSizeMember": "Standard_DS13",
-      "numberOfNodes": "[parameters('numberOfNodes')]",
-      "numNodesMinusLast": "sub([parameters('numberOfNodes')],1)",
+      "numberOfNodes": "[string(parameters('numberOfNodes'))]",
+      "numNodesMinusLast": "[string(sub(parameters('numberOfNodes'),1))]",
       "vmTemplate": "[concat(variables('templateBaseUrl'), 'node-resources.json')]"
     },
     "tshirtSizeMedium": {
       "vmSizeMember": "Standard_G3",
-      "numberOfNodes": "[parameters('numberOfNodes')]",
-      "numNodesMinusLast": "sub([parameters('numberOfNodes')],1)",
+      "numberOfNodes": "[string(parameters('numberOfNodes'))]",
+      "numNodesMinusLast": "[string(sub(parameters('numberOfNodes'),1))]",
       "vmTemplate": "[concat(variables('templateBaseUrl'), 'node-resources.json')]"
     },
     "tshirtSizeLarge": {
       "vmSizeMember": "Standard_G4",
-      "numberOfNodes": "[parameters('numberOfNodes')]",
-      "numNodesMinusLast": "sub([parameters('numberOfNodes')],1)",
+      "numberOfNodes": "[string(parameters('numberOfNodes'))]",
+      "numNodesMinusLast": "[string(sub(parameters('numberOfNodes'),1))]",
       "vmTemplate": "[concat(variables('templateBaseUrl'), 'node-resources.json')]"
     },
     "imageInfo": {
