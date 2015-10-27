@@ -16,7 +16,7 @@
     },
     "numberOfNodes": {
       "type": "int",
-      "defaultValue": 3,
+      "defaultValue": "3",
       "metadata": {
         "description": "Number of ClustrixDB nodes to deploy"
       }
